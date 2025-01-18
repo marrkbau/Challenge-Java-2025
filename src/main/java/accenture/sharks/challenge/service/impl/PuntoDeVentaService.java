@@ -1,6 +1,8 @@
 package accenture.sharks.challenge.service.impl;
 
 import accenture.sharks.challenge.dto.PuntoDeVentaDTO;
+import accenture.sharks.challenge.exceptions.IdMissingException;
+import accenture.sharks.challenge.exceptions.PuntoDeVentaNotFoundException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.PuntoDeVenta;
 import accenture.sharks.challenge.service.IPuntoDeVentaService;
@@ -78,8 +80,12 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
     @Override
     public void updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
 
-        PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
-        hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
+        if(puntoDeVentaDTO.getId() != null) {
+            PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
+            hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
+        } else {
+            throw new IdMissingException("El ID del punto de venta es requerido para actualizarlo");
+        }
     }
 
     /**
@@ -87,7 +93,10 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      */
     @Override
     public void removePuntoDeVenta(Long id) {
-        hashOperations.delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+        Long deletedCount = hashOperations.delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+        if (deletedCount.equals(0L)) {
+            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id);
+        }
     }
 
 

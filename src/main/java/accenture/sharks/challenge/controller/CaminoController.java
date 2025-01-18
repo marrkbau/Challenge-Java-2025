@@ -23,7 +23,6 @@ public class CaminoController {
 
     @PostMapping
     public ResponseEntity<String> addCamino(@Valid @RequestBody CaminoDTO camino, BindingResult bindingResult) {
-
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Error: ");
             bindingResult.getAllErrors().forEach(error -> {

@@ -95,9 +95,9 @@ public class CacheInitializer {
             logger.info("Limpiando cache...");
             redisTemplate.delete(CacheEntries.PUNTOS_DE_VENTA.getValue());
             redisTemplate.delete(CacheEntries.CAMINOS.getValue());
-            logger.info("Redis cache cleaned successfully.");
+            logger.info("Cache limpiada de forma exitosa");
         } catch (Exception e) {
-            logger.error("Error while cleaning Redis cache: ", e);
+            logger.error("Error limpiando la cache de Redis ", e);
         }
     }
 }
