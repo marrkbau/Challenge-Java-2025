@@ -1,25 +1,26 @@
-package accenture.sharks.challenge.model;
+package accenture.sharks.challenge.dto;
 
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 
-import java.io.Serializable;
-
-
-public class PuntoDeVenta implements Serializable {
+@Validated
+public class PuntoDeVentaDTO {
 
     private Long id;
 
+    @NotNull(message = "El campo nombre no puede estar vacio")
     private String nombre;
 
-    public PuntoDeVenta(Long id, String nombre) {
+    public PuntoDeVentaDTO(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
     }
 
-    public PuntoDeVenta(String nombre) {
+    public PuntoDeVentaDTO(String nombre) {
         this.nombre = nombre;
     }
 
-    public PuntoDeVenta() {
+    public PuntoDeVentaDTO() {
     }
 
 

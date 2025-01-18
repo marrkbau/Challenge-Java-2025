@@ -1,8 +1,8 @@
 package accenture.sharks.challenge;
 
+import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
-import jakarta.annotation.PreDestroy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
@@ -19,8 +19,7 @@ import java.util.List;
 @Component
 public class CacheInitializer {
 
-    private static final String PUNTOS_DE_VENTA_CACHE = "puntosDeVenta";
-    private static final String CAMINOS_CACHE = "caminos";
+
     private static final Logger logger = LoggerFactory.getLogger(CacheInitializer.class);
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -47,10 +46,10 @@ public class CacheInitializer {
 
             HashOperations<String, String, PuntoDeVenta> hashOperations = redisTemplate.opsForHash();
 
-            long initialCount = hashOperations.size(PUNTOS_DE_VENTA_CACHE);
+            long initialCount = hashOperations.size(CacheEntries.PUNTOS_DE_VENTA.getValue());
             if (initialCount == 0) {
                 puntosDeVentaIniciales.forEach(pdv -> {
-                    hashOperations.put(PUNTOS_DE_VENTA_CACHE, pdv.getId().toString(), pdv);
+                    hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), pdv.getId().toString(), pdv);
                 });
                 logger.info("Cache de puntos de venta inicializada en Redis con {} elementos", puntosDeVentaIniciales.size());
             } else {
@@ -75,11 +74,11 @@ public class CacheInitializer {
             );
 
             HashOperations<String, String, Camino> caminoHashOperations = redisTemplate.opsForHash();
-            long caminoCount = caminoHashOperations.size(CAMINOS_CACHE);
+            long caminoCount = caminoHashOperations.size(CacheEntries.CAMINOS.getValue());
             if (caminoCount == 0) {
                 caminosIniciales.forEach(camino -> {
                     String key = camino.getIdA() + "-" + camino.getIdB();
-                    caminoHashOperations.put(CAMINOS_CACHE, key, camino);
+                    caminoHashOperations.put(CacheEntries.CAMINOS.getValue(), key, camino);
                 });
                 logger.info("Cache de caminos inicializada en Redis con {} elementos", caminosIniciales.size());
             } else {
@@ -93,9 +92,9 @@ public class CacheInitializer {
     @EventListener(ContextClosedEvent.class)
     public void cleanRedisCache() {
         try {
-            logger.info("Cleaning Redis cache before shutdown...");
-            redisTemplate.delete(PUNTOS_DE_VENTA_CACHE);
-            redisTemplate.delete(CAMINOS_CACHE);
+            logger.info("Limpiando cache...");
+            redisTemplate.delete(CacheEntries.PUNTOS_DE_VENTA.getValue());
+            redisTemplate.delete(CacheEntries.CAMINOS.getValue());
             logger.info("Redis cache cleaned successfully.");
         } catch (Exception e) {
             logger.error("Error while cleaning Redis cache: ", e);
