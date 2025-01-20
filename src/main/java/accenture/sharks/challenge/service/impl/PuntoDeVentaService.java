@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
@@ -42,6 +43,7 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      * Retorna un punto de venta por su ID
      */
     @Override
+    @Transactional(readOnly = true)
     public PuntoDeVentaDTO getPuntoDeVenta(Long id) {
         return toDTO(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString()));
     }

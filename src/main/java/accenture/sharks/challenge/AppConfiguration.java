@@ -1,6 +1,7 @@
 package accenture.sharks.challenge;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,11 @@ public class AppConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setSkipNullEnabled(true)
+                .setMatchingStrategy( MatchingStrategies.STRICT)
+                .setAmbiguityIgnored(true);
+        return modelMapper;
     }
 }
