@@ -5,10 +5,14 @@ services:
     ports:
       - "8088:8080"
     environment:
+      SPRING_CONFIG_NAME: application-example
       DBNAME: db_challenge_java
       DBUSER: ejemplo
       DBPASS: root
       DBHOST: un-mysql
+      DBPORT: 3306
+      CHHOST: redis
+      CHPORT: 6379
     depends_on:
       - mysql-development
       - redis

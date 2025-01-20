@@ -1,7 +1,7 @@
 package accenture.sharks.challenge.service;
 
 import accenture.sharks.challenge.dto.CaminoDTO;
-import accenture.sharks.challenge.model.Camino;
+import accenture.sharks.challenge.dto.CaminoMinimoDTO;
 
 import java.util.List;
 
@@ -13,6 +13,6 @@ public interface ICaminoService {
 
     List<CaminoDTO> getCaminosDirectosDesdeUnPunto(Long idA);
 
-    CaminoDTO getCaminoMenorCosto(Long idA, Long idB);
+    CaminoMinimoDTO getCaminoMenorCosto(Long idA, Long idB);
 
-}
+    }

@@ -61,7 +61,7 @@ public class CacheInitializer {
                     new Camino(1L, 3L, 3d),
                     new Camino(2L, 3L, 5d),
                     new Camino(2L, 4L, 10d),
-                    new Camino(1L, 4L, 11d),
+                    new Camino(1L, 4L, 7d),
                     new Camino(4L, 5L, 5d),
                     new Camino(2L, 5L, 14d),
                     new Camino(6L, 7L, 32d),
