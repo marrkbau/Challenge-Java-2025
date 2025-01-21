@@ -1,12 +1,12 @@
 package accenture.sharks.challenge.controller;
 
 import accenture.sharks.challenge.dto.AcreditacionDTO;
-import accenture.sharks.challenge.dto.PuntoDeVentaDTO;
 import accenture.sharks.challenge.service.IAcreditacionService;
-import accenture.sharks.challenge.service.IPuntoDeVentaService;
-import org.hibernate.annotations.OptimisticLock;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,20 +17,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class AcreditacionController {
 
     private final IAcreditacionService acreditacionService;
-    private final IPuntoDeVentaService puntoDeVentaService;
+    private static final Logger logger = LoggerFactory.getLogger(AcreditacionController.class);
 
-    public AcreditacionController(IAcreditacionService acreditacionService, IPuntoDeVentaService puntoDeVentaService) {
+
+    public AcreditacionController(IAcreditacionService acreditacionService) {
         this.acreditacionService = acreditacionService;
-        this.puntoDeVentaService = puntoDeVentaService;
     }
 
     @PostMapping
-    public void acreditar(@RequestBody AcreditacionDTO acreditacion) {
+    public ResponseEntity<String> acreditar(@RequestBody @Valid AcreditacionDTO acreditacion, BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            StringBuilder errorMessages = new StringBuilder("Error: ");
+            bindingResult.getAllErrors().forEach(error -> {
+                errorMessages.append(error.getDefaultMessage()).append(", ");
+            });
+            return ResponseEntity.badRequest().body(errorMessages.toString());
+        }
+        logger.info("Generando acreditación para el punto de venta: {}", acreditacion.getIdPuntoDeVenta());
         acreditacionService.generarAcreditacion(acreditacion);
+        return ResponseEntity.ok("Acreditación generada exitosamente");
     }
 
-    private PuntoDeVentaDTO getPuntoDeVenta(Long id) {
-        return puntoDeVentaService.getPuntoDeVenta(id);
-    }
 
 }

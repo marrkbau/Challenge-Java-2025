@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "acreditacion")
@@ -18,7 +18,7 @@ public class Acreditacion implements Serializable {
     BigDecimal importe;
 
     @Column(name = "fecha_acreditacion")
-    Date fechaAcreditacion;
+    LocalDateTime fechaAcreditacion;
 
     @Column(name = "nombre_punto_venta")
     String nombrePuntoDeVenta;
@@ -29,7 +29,7 @@ public class Acreditacion implements Serializable {
     public Acreditacion() {
     }
 
-    public Acreditacion( Long idPuntoDeVenta, BigDecimal importe, Date fechaAcreditacion) {
+    public Acreditacion( Long idPuntoDeVenta, BigDecimal importe, LocalDateTime fechaAcreditacion) {
         this.importe = importe;
         this.fechaAcreditacion = fechaAcreditacion;
         this.nombrePuntoDeVenta = nombrePuntoDeVenta;
@@ -52,11 +52,11 @@ public class Acreditacion implements Serializable {
         this.importe = importe;
     }
 
-    public Date getFechaAcreditacion() {
+    public LocalDateTime getFechaAcreditacion() {
         return fechaAcreditacion;
     }
 
-    public void setFechaAcreditacion(Date fechaAcreditacion) {
+    public void setFechaAcreditacion(LocalDateTime fechaAcreditacion) {
         this.fechaAcreditacion = fechaAcreditacion;
     }
 

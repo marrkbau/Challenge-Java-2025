@@ -80,7 +80,9 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      * Si el punto de venta no existe, se añade.
      */
     @Override
-    public void updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
+    public boolean updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
+
+        boolean puntoDeVentaExistente = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVentaDTO.getId().toString()) != null;
 
         if(puntoDeVentaDTO.getId() != null) {
             PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
@@ -88,6 +90,8 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
         } else {
             throw new IdMissingException("El ID del punto de venta es requerido para actualizarlo");
         }
+
+        return puntoDeVentaExistente;
     }
 
     /**

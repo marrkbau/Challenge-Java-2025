@@ -48,9 +48,7 @@ public class PuntoDeVentaController {
         if(bindingResult.hasErrors()) {
             logger.error("Error agregando punto de venta");
             StringBuilder errorMessages = new StringBuilder("Error: ");
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append(", ");
-            });
+            bindingResult.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append(", "));
             return new ResponseEntity<>(errorMessages.toString(), HttpStatus.BAD_REQUEST);
         }
 
@@ -69,18 +67,22 @@ public class PuntoDeVentaController {
         if(bindingResult.hasErrors()) {
             logger.error("Error actualizando punto de venta");
             StringBuilder errorMessages = new StringBuilder("Error: ");
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append(", ");
-            });
+            bindingResult.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append(", "));
             return new ResponseEntity<>(errorMessages.toString(), HttpStatus.BAD_REQUEST);
         }
 
         logger.info("Actualizando punto de venta: {}", puntoDeVenta.getNombre());
+        boolean puntoExistente;
         try {
-            puntoVentaService.updatePuntoDeVenta(puntoDeVenta);
+           puntoExistente = puntoVentaService.updatePuntoDeVenta(puntoDeVenta);
         } catch (IdMissingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
+
+        if (!puntoExistente) {
+            return ResponseEntity.status(HttpStatus.CREATED).body("El punto de venta no existía, se ha creado");
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body("Punto de venta actualizado, nuevo nombre: " + puntoDeVenta.getNombre());
     }
 

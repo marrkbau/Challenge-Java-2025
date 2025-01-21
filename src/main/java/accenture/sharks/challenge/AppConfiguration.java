@@ -14,8 +14,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @Configuration
 public class AppConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(AppConfiguration.class);
-
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Object> template = new RedisTemplate<>();

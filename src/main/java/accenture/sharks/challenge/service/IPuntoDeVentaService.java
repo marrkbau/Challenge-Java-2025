@@ -15,7 +15,7 @@ public interface IPuntoDeVentaService {
 
     Long generateNewId();
 
-    void updatePuntoDeVenta(PuntoDeVentaDTO puntoVenta);
+    boolean updatePuntoDeVenta(PuntoDeVentaDTO puntoVenta);
 
     void removePuntoDeVenta(Long id);
 

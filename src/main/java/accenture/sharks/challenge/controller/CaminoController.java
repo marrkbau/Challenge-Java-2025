@@ -31,9 +31,7 @@ public class CaminoController {
         logger.info("Agregando camino entre los puntos {} y {}", camino.getIdA(), camino.getIdB());
         if (bindingResult.hasErrors()) {
             StringBuilder errorMessages = new StringBuilder("Error: ");
-            bindingResult.getAllErrors().forEach(error -> {
-                errorMessages.append(error.getDefaultMessage()).append(", ");
-            });
+            bindingResult.getAllErrors().forEach(error -> errorMessages.append(error.getDefaultMessage()).append(", "));
             return new ResponseEntity<>(errorMessages.toString(), HttpStatus.BAD_REQUEST);
         }
 

@@ -60,8 +60,6 @@ public class CaminoService implements ICaminoService {
 
     /**
      * Retorna todos los caminos que estan conecatdos directamente al
-     * @param id
-     *
      */
     @Override
     public List<CaminoDTO> getCaminosDirectosDesdeUnPunto(Long id) {
