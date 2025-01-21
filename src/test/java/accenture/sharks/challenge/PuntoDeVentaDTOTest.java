@@ -25,4 +25,6 @@ public class PuntoDeVentaDTOTest {
     puntoDeVentaDTO.setNombre(nombre);
     assertEquals(nombre, puntoDeVentaDTO.getNombre());
   }
+
+
 }

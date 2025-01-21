@@ -31,4 +31,17 @@ public class AcreditacionDTOTest {
     acreditacionDTO.setNombrePuntoDeVenta(nombrePuntoDeVenta);
     assertEquals(nombrePuntoDeVenta, acreditacionDTO.getNombrePuntoDeVenta());
   }
+
+  @Test
+  public void testConstructor() {
+    Long idPuntoDeVenta = 1L;
+    BigDecimal importe = BigDecimal.valueOf(100.50);
+    String nombrePuntoDeVenta = "Punto de Venta 1";
+
+    AcreditacionDTO acreditacionDTO = new AcreditacionDTO(idPuntoDeVenta, importe, nombrePuntoDeVenta);
+
+    assertEquals(idPuntoDeVenta, acreditacionDTO.getIdPuntoDeVenta());
+    assertEquals(importe, acreditacionDTO.getImporte());
+    assertEquals(nombrePuntoDeVenta, acreditacionDTO.getNombrePuntoDeVenta());
+  }
 }
