@@ -20,7 +20,6 @@ public class CaminoService implements ICaminoService {
 
     private final HashOperations<String, String, Camino> hashCamino;
     private final HashOperations<String, String, PuntoDeVenta> hashPuntoDeVenta;
-
     private final ModelMapper modelMapper;
 
 

@@ -20,17 +20,14 @@ import java.time.LocalDateTime;
 public class AcreditacionService implements IAcreditacionService {
 
     private final ModelMapper modelMapper;
-    private final RedisTemplate<String, Object> redisTemplate;
-    private final HashOperations<String, String, PuntoDeVenta> hashOperations;
     private final AcreditacionRepository acreditacionRepository;
-
+    private final HashOperations<String, Object, PuntoDeVenta> hashOperations;
 
 
     public AcreditacionService(ModelMapper modelMapper, RedisTemplate<String, Object> redisTemplate, AcreditacionRepository acreditacionRepository) {
         this.modelMapper = modelMapper;
-        this.hashOperations = redisTemplate.opsForHash();
-        this.redisTemplate = redisTemplate;
         this.acreditacionRepository = acreditacionRepository;
+        this.hashOperations = redisTemplate.opsForHash();
     }
 
     @Override

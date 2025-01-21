@@ -43,7 +43,6 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      * Retorna un punto de venta por su ID
      */
     @Override
-    @Transactional(readOnly = true)
     public PuntoDeVentaDTO getPuntoDeVenta(Long id) {
         return toDTO(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString()));
     }
@@ -82,9 +81,10 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
     @Override
     public boolean updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
 
-        boolean puntoDeVentaExistente = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVentaDTO.getId().toString()) != null;
+        boolean puntoDeVentaExistente;
 
         if(puntoDeVentaDTO.getId() != null) {
+            puntoDeVentaExistente = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVentaDTO.getId().toString()) != null;
             PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
             hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
         } else {

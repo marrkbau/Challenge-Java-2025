@@ -7,6 +7,8 @@ public class CaminoMinimoDTO {
     private List<PuntoDeVentaDTO> puntosDeVentas;
     private Double costoTotal;
 
+    public CaminoMinimoDTO() {
+    }
     public CaminoMinimoDTO( List<PuntoDeVentaDTO> puntosDeVenta, Double costoTotal) {
         this.puntosDeVentas = puntosDeVenta;
         this.costoTotal = costoTotal;
@@ -29,5 +31,4 @@ public class CaminoMinimoDTO {
         this.costoTotal = costoTotal;
     }
 
-    // Getters y Setters
 }
