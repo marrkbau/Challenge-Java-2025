@@ -48,6 +48,12 @@ Ejemplo:
 }
 ```
 * PUT /puntos Actualiza un punto de venta en la cache. En el caso de que no exista ese punto lo crea.
+```json
+{
+    "id": 1,
+    "nombre": "tierra del fuego"
+}
+```
 * DELETE /puntos/{id} Elimina un punto de venta de la cache. 
 
 ### Caminos y costos
