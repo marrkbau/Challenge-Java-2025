@@ -6,11 +6,4 @@ public class AddCaminoException extends RuntimeException {
         super(message);
     }
 
-    public AddCaminoException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public AddCaminoException(Throwable cause) {
-        super(cause);
-    }
 }

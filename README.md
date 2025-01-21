@@ -43,14 +43,14 @@ Ejemplo:
     "importe": 20.0
 }
 ```
-
+* GET /acreditaciones/{idPuntoDeVenta} Obtiene todas las acreditaciones de un punto de venta en base a su Id. 
 
 
 ## Descripción
 
 ### Tecnologías Utilizadas
 
-* Java 23
+* Java 21
 * Spring Boot 3.4.1
 * MySQL 5.7.4
 * Maven
@@ -66,3 +66,4 @@ la entidad que quizá en algún momento se quiera persistir o modificar.
 * Asumo que al cargar un camino directo entre un punto A y un punto B, 
 y ya se encontraba ese camino, funcionaria como una actualización de costo. 
 
+![challenge-java-class-diagram.jpg](challenge-java-class-diagram.jpg)

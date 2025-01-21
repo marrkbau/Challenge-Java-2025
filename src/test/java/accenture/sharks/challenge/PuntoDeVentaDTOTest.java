@@ -26,5 +26,20 @@ public class PuntoDeVentaDTOTest {
     assertEquals(nombre, puntoDeVentaDTO.getNombre());
   }
 
+  @Test
+  public void testConstructor() {
+    Long id = 1L;
+    String nombre = "Punto de Venta 1";
+
+    PuntoDeVentaDTO puntoDeVentaDTO = new PuntoDeVentaDTO(id, nombre);
+
+    assertEquals(id, puntoDeVentaDTO.getId());
+    assertEquals(nombre, puntoDeVentaDTO.getNombre());
+
+    puntoDeVentaDTO = new PuntoDeVentaDTO(nombre);
+
+    assertEquals(nombre, puntoDeVentaDTO.getNombre());
+  }
+
 
 }

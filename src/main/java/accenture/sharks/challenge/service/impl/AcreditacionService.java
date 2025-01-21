@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AcreditacionService implements IAcreditacionService {
@@ -45,9 +46,19 @@ public class AcreditacionService implements IAcreditacionService {
         acreditacionRepository.save(acreditacion);
     }
 
+    @Override
+    public List<AcreditacionDTO> getAcreditacionesByIdPuntoDeVenta(Long id) {
+        List<Acreditacion> acreditaciones = acreditacionRepository.findAllByIdPuntoDeVenta(id);
+        return acreditaciones.stream().map(this::toDTO).toList();
+    }
+
 
     private Acreditacion toEntity(AcreditacionDTO acreditacionDTO) {
         return modelMapper.map(acreditacionDTO, Acreditacion.class);
+    }
+
+    private AcreditacionDTO toDTO(Acreditacion acreditacion) {
+        return modelMapper.map(acreditacion, AcreditacionDTO.class);
     }
 
 }

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class AcreditacionDTOTest {
 
@@ -30,6 +31,9 @@ public class AcreditacionDTOTest {
     String nombrePuntoDeVenta = "Punto de Venta 1";
     acreditacionDTO.setNombrePuntoDeVenta(nombrePuntoDeVenta);
     assertEquals(nombrePuntoDeVenta, acreditacionDTO.getNombrePuntoDeVenta());
+
+    acreditacionDTO.setFechaAcreditacion(LocalDateTime.of(2021, 1, 1, 0, 0));
+    assertEquals(LocalDateTime.of(2021, 1, 1, 0, 0), acreditacionDTO.getFechaAcreditacion());
   }
 
   @Test

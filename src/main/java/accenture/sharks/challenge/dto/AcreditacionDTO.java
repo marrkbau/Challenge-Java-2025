@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotNull;
 import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Validated
 public class AcreditacionDTO {
@@ -16,6 +17,8 @@ public class AcreditacionDTO {
 
     private String nombrePuntoDeVenta;
 
+    private LocalDateTime fechaAcreditacion;
+
     public AcreditacionDTO() {
     }
 
@@ -23,6 +26,14 @@ public class AcreditacionDTO {
         this.idPuntoDeVenta = idPuntoDeVenta;
         this.importe = importe;
         this.nombrePuntoDeVenta = nombrePuntoDeVenta;
+    }
+
+    public LocalDateTime getFechaAcreditacion() {
+        return fechaAcreditacion;
+    }
+
+    public void setFechaAcreditacion(LocalDateTime fechaAcreditacion) {
+        this.fechaAcreditacion = fechaAcreditacion;
     }
 
     public @NotNull(message = "El id del punto de venta no puede ser nulo") Long getIdPuntoDeVenta() {

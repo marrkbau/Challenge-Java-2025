@@ -27,4 +27,17 @@ public class CaminoTest {
     camino.setIdB(2L);
     assertEquals(2L, camino.getIdB());
   }
+
+  @Test
+  public void testConstructor() {
+    Long idA = 1L;
+    Long idB = 2L;
+    Double costo = 100.50;
+
+    Camino camino = new Camino(idA, idB, costo);
+
+    assertEquals(idA, camino.getIdA());
+    assertEquals(idB, camino.getIdB());
+    assertEquals(costo, camino.getCosto());
+  }
 }

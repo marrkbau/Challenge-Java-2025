@@ -50,7 +50,7 @@ public class CaminoController {
     }
 
     @GetMapping("/{idA}")
-    public List<CaminoDTO> getCaminosDirectosDesdeUnPunto(@PathVariable Long idA) {
+        public List<CaminoDTO> getCaminosDirectosDesdeUnPunto(@PathVariable Long idA) {
         logger.info("Obteniendo caminos directos desde el punto {}", idA);
         return caminoService.getCaminosDirectosDesdeUnPunto(idA);
     }
