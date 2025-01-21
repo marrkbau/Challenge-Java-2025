@@ -8,6 +8,11 @@
 
 ## Endpoints http
 
+Desde el navegador utilizar la URL http://localhost:8088/
+Para acceder a la base de datos MySQL utilizar la URL jdbc:mysql://localhost:42333/challenge_java
+Usuario: ejemplo
+Contraseña: root
+
 ### Puntos de Ventas
 * GET /puntos Obtiene todos los puntos de venta en la cache.
 * GET /puntos/{id} Obtiene un punto de venta en base a su Id.
