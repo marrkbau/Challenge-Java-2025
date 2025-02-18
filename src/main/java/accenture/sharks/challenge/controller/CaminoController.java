@@ -3,6 +3,7 @@ package accenture.sharks.challenge.controller;
 import accenture.sharks.challenge.dto.CaminoDTO;
 import accenture.sharks.challenge.exceptions.AddCaminoException;
 import accenture.sharks.challenge.dto.CaminoMinimoDTO;
+import accenture.sharks.challenge.exceptions.DeleteCaminoException;
 import accenture.sharks.challenge.service.ICaminoService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -44,9 +45,15 @@ public class CaminoController {
     }
 
     @DeleteMapping("/{idA}/{idB}")
-    public void deleteCamino(@PathVariable Long idA, @PathVariable Long idB) {
+    public ResponseEntity<String> deleteCamino(@PathVariable Long idA, @PathVariable Long idB) {
         logger.info("Eliminando camino entre los puntos {} y {}", idA, idB);
-        caminoService.deleteCamino(idA, idB);
+        try {
+            caminoService.deleteCamino(idA, idB);
+            return new ResponseEntity<>("Camino eliminado exitosamente", HttpStatus.OK);
+        } catch (DeleteCaminoException e) {
+            logger.error("Error al eliminar el camino: {}", e.getMessage());
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/{idA}")

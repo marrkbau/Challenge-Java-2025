@@ -44,7 +44,13 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      */
     @Override
     public PuntoDeVentaDTO getPuntoDeVenta(Long id) {
-        return toDTO(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString()));
+        PuntoDeVenta puntoDeVenta = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+        try {
+            puntoDeVenta = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+            return toDTO(puntoDeVenta);
+        } catch (Exception e) {
+            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id);
+        }
     }
 
     /**

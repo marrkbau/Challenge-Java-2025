@@ -3,6 +3,7 @@ package accenture.sharks.challenge.service.impl;
 import accenture.sharks.challenge.dto.CaminoDTO;
 import accenture.sharks.challenge.dto.PuntoDeVentaDTO;
 import accenture.sharks.challenge.exceptions.AddCaminoException;
+import accenture.sharks.challenge.exceptions.DeleteCaminoException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.dto.CaminoMinimoDTO;
@@ -54,7 +55,12 @@ public class CaminoService implements ICaminoService {
     @Override
     public void deleteCamino(Long idA, Long idB) {
         String key = generateKey(idA, idB);
-        hashCamino.delete(CacheEntries.CAMINOS.getValue(), key);
+        if(hashCamino.hasKey(CacheEntries.CAMINOS.getValue(), key)) {
+            hashCamino.delete(CacheEntries.CAMINOS.getValue(), key);
+        } else {
+            throw new DeleteCaminoException("No se encontro el camino entre los puntos " + idA + " y " + idB);
+        }
+
     }
 
     /**

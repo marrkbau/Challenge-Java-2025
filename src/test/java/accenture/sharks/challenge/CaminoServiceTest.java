@@ -10,10 +10,12 @@ import static org.mockito.Mockito.when;
 import accenture.sharks.challenge.dto.CaminoDTO;
 import accenture.sharks.challenge.dto.CaminoMinimoDTO;
 import accenture.sharks.challenge.exceptions.AddCaminoException;
+import accenture.sharks.challenge.exceptions.DeleteCaminoException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
 import accenture.sharks.challenge.service.impl.CaminoService;
+import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,9 +89,22 @@ public class CaminoServiceTest {
   void deleteCamino_ShouldDeleteCaminoSuccessfully() {
     String key = "1-2";
 
+    when(hashCamino.hasKey(CacheEntries.CAMINOS.getValue(), key)).thenReturn(true);
+
     caminoService.deleteCamino(1L, 2L);
 
     verify(hashCamino).delete(CacheEntries.CAMINOS.getValue(), key);
+  }
+
+  @Test
+  void deleteCamino_ShouldThrowException_WhenCaminoDoesNotExist() {
+    String key = "1-2";
+
+    when(hashCamino.hasKey(CacheEntries.CAMINOS.getValue(), key)).thenReturn(false);
+
+    DeleteCaminoException exception = assertThrows(DeleteCaminoException.class, () -> caminoService.deleteCamino(1L, 2L));
+
+    assertEquals("No se encontro el camino entre los puntos 1 y 2", exception.getMessage());
   }
 
   @Test

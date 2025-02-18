@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/puntos")
@@ -34,13 +36,16 @@ public class PuntoDeVentaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PuntoDeVentaDTO> getPuntoVenta(@PathVariable Long id) {
+    public ResponseEntity<?> getPuntoVenta(@PathVariable Long id) {
         logger.info("Obteniendo punto de venta con id: {}", id);
-        PuntoDeVentaDTO puntoDeVentaDTO = puntoVentaService.getPuntoDeVenta(id);
-        if (puntoDeVentaDTO == null) {
-            return ResponseEntity.notFound().build();
+        try {
+            PuntoDeVentaDTO puntoDeVentaDTO = puntoVentaService.getPuntoDeVenta(id);
+            return ResponseEntity.status(HttpStatus.OK).body(puntoDeVentaDTO);
+        } catch (PuntoDeVentaNotFoundException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("mensaje", "Punto de venta con id: " + id + " no encontrado");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(puntoDeVentaDTO);
     }
 
     @PostMapping
