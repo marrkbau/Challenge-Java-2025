@@ -16,6 +16,7 @@ import accenture.sharks.challenge.exceptions.IdMissingException;
 import accenture.sharks.challenge.exceptions.PuntoDeVentaNotFoundException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.PuntoDeVentaRepository;
 import accenture.sharks.challenge.service.impl.PuntoDeVentaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,13 +47,16 @@ public class PuntoDeVentaServiceTest {
   @Mock
   private HashOperations<String, Object, Object> hashOperations;
 
+  @Mock
+  private PuntoDeVentaRepository puntoDeVentaRepository;
+
   PuntoDeVentaService puntoDeVentaService;
 
 
   @BeforeEach
   void setUp() {
     when(redisTemplate.opsForHash()).thenReturn(hashOperations);
-    puntoDeVentaService = new PuntoDeVentaService(redisTemplate, modelMapper);
+    puntoDeVentaService = new PuntoDeVentaService(redisTemplate, modelMapper, puntoDeVentaRepository);
   }
 
   @Test
@@ -110,9 +114,6 @@ public class PuntoDeVentaServiceTest {
     when(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(new PuntoDeVenta(1L, "Tienda Vieja"));
     when(modelMapper.map(dto, PuntoDeVenta.class)).thenReturn(punto);
 
-    boolean result = puntoDeVentaService.updatePuntoDeVenta(dto);
-
-    assertTrue(result);
     verify(hashOperations).put(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1", punto);
   }
 

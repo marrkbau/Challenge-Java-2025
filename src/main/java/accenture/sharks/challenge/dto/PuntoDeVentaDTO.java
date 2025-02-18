@@ -11,9 +11,17 @@ public class PuntoDeVentaDTO {
     @NotNull(message = "El campo nombre no puede estar vacio")
     private String nombre;
 
+    private Boolean activo;
+
     public PuntoDeVentaDTO(Long id, String nombre) {
         this.id = id;
         this.nombre = nombre;
+    }
+
+    public PuntoDeVentaDTO(Long id, String nombre, Boolean activo) {
+        this.id = id;
+        this.nombre = nombre;
+        this.activo = activo;
     }
 
     public PuntoDeVentaDTO(String nombre) {
@@ -23,6 +31,13 @@ public class PuntoDeVentaDTO {
     public PuntoDeVentaDTO() {
     }
 
+    public Boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
+    }
 
     public String getNombre() {
         return nombre;

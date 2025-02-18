@@ -5,6 +5,7 @@ import accenture.sharks.challenge.exceptions.IdMissingException;
 import accenture.sharks.challenge.exceptions.PuntoDeVentaNotFoundException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.PuntoDeVentaRepository;
 import accenture.sharks.challenge.service.IPuntoDeVentaService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.HashOperations;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PuntoDeVentaService implements IPuntoDeVentaService {
@@ -21,22 +23,43 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
     private final HashOperations<String, String, PuntoDeVenta> hashOperations;
     private final ModelMapper modelMapper;
 
+    private final PuntoDeVentaRepository puntoDeVentaRepository;
 
-    public PuntoDeVentaService(RedisTemplate<String, Object> redisTemplate, ModelMapper modelMapper) {
+
+    public PuntoDeVentaService(RedisTemplate<String, Object> redisTemplate, ModelMapper modelMapper, PuntoDeVentaRepository puntoDeVentaRepository) {
         this.hashOperations = redisTemplate.opsForHash();
         this.modelMapper = modelMapper;
+        this.puntoDeVentaRepository = puntoDeVentaRepository;
     }
 
     /**
      * Retorna todos los puntos de venta que estan en el Hash de Redis
-     * Aclaración: Los ordena por ID, ya que el hash de redis no garantiza el orden de inserción
+     * Si no hay puntos de venta en el Hash, se consultan de la base de datos y se guardan en el Hash
      */
     @Override
     public List<PuntoDeVentaDTO> getAllPuntosDeVenta() {
         List<PuntoDeVenta> puntosDeVenta = hashOperations.values(CacheEntries.PUNTOS_DE_VENTA.getValue());
+
+        if (puntosDeVenta.isEmpty()) {
+            puntosDeVenta = puntoDeVentaRepository.findAll();
+
+            puntosDeVenta = puntosDeVenta.stream()
+                .filter(PuntoDeVenta::isActivo)
+                .toList();
+
+            for (PuntoDeVenta puntoDeVenta : puntosDeVenta) {
+                hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
+            }
+        } else {
+            puntosDeVenta = puntosDeVenta.stream()
+                .filter(PuntoDeVenta::isActivo)
+                .toList();
+        }
+
         return puntosDeVenta.stream()
-                .sorted(Comparator.comparing(PuntoDeVenta::getId))
-                .map(this::toDTO).toList();
+            .sorted(Comparator.comparing(PuntoDeVenta::getId))
+            .map(this::toDTO)
+            .toList();
     }
 
     /**
@@ -45,39 +68,29 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
     @Override
     public PuntoDeVentaDTO getPuntoDeVenta(Long id) {
         PuntoDeVenta puntoDeVenta = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
-        try {
-            puntoDeVenta = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+        try{
             return toDTO(puntoDeVenta);
-        } catch (Exception e) {
-            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id);
+        } catch (NullPointerException e) {
+            puntoDeVenta = puntoDeVentaRepository.findById(id)
+                .orElseThrow(() -> new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id));
+
+            hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString(), puntoDeVenta);
+            return toDTO(puntoDeVenta);
         }
     }
 
+
     /**
-     * Agrega un punto de venta al hash de Redis
+     * Agrega un punto de venta al hash de Redis y a la DB
+     * Si el punto de venta ya existe, se actualiza.
      */
     @Override
     public void addPuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
-        if (puntoDeVentaDTO.getId() == null) {
-            puntoDeVentaDTO.setId(generateNewId());
-        }
 
         PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
+        puntoDeVenta = puntoDeVentaRepository.save(puntoDeVenta);
         hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
-    }
 
-
-    /**
-     * Genera un nuevo ID para un punto de venta
-     */
-    @Override
-    public Long generateNewId() {
-        List<PuntoDeVenta> allPuntos = hashOperations.values(CacheEntries.PUNTOS_DE_VENTA.getValue());
-
-        return allPuntos.stream()
-                .mapToLong(PuntoDeVenta::getId)
-                .max()
-                .orElse(0L) + 1;
     }
 
     /**
@@ -85,31 +98,53 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
      * Si el punto de venta no existe, se añade.
      */
     @Override
-    public boolean updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
-
-        boolean puntoDeVentaExistente;
-
-        if(puntoDeVentaDTO.getId() != null) {
-            puntoDeVentaExistente = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVentaDTO.getId().toString()) != null;
-            PuntoDeVenta puntoDeVenta = toEntity(puntoDeVentaDTO);
-            hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVenta.getId().toString(), puntoDeVenta);
-        } else {
+    public void updatePuntoDeVenta(PuntoDeVentaDTO puntoDeVentaDTO) {
+        if (puntoDeVentaDTO.getId() == null) {
             throw new IdMissingException("El ID del punto de venta es requerido para actualizarlo");
         }
 
-        return puntoDeVentaExistente;
+        PuntoDeVenta puntoDeVentaExistente = puntoDeVentaRepository.findById(puntoDeVentaDTO.getId())
+            .orElseThrow(() -> new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + puntoDeVentaDTO.getId()));
+
+        if (puntoDeVentaDTO.getNombre() != null) {
+            puntoDeVentaExistente.setNombre(puntoDeVentaDTO.getNombre());
+        }
+
+        if (puntoDeVentaDTO.isActivo() != null) {
+            puntoDeVentaExistente.setActivo(puntoDeVentaDTO.isActivo());
+        }
+
+        hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), puntoDeVentaExistente.getId().toString(), puntoDeVentaExistente);
+        puntoDeVentaRepository.save(puntoDeVentaExistente);
     }
 
+
+
+
     /**
-     * Elimina un punto de venta del hash de Redis
+     * Elimina un punto de venta del hash de Redis y lo desactiva en la base de datos
+     * Si el punto de venta no existe, se lanza una excepción
+     *
      */
     @Override
     public void removePuntoDeVenta(Long id) {
-        Long deletedCount = hashOperations.delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
-        if (deletedCount.equals(0L)) {
-            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id);
+        Long deletedFromCache = hashOperations.delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
+
+        if (deletedFromCache.equals(0L)) {
+            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id + " en Redis");
         }
+
+        Optional<PuntoDeVenta> puntoDeVentaOptional = puntoDeVentaRepository.findById(id);
+        if (puntoDeVentaOptional.isEmpty()) {
+            throw new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id + " en la base de datos");
+        }
+
+        PuntoDeVenta puntoDeVenta = puntoDeVentaOptional.get();
+
+        puntoDeVenta.setActivo(false);
+        puntoDeVentaRepository.save(puntoDeVenta);
     }
+
 
 
     private PuntoDeVentaDTO toDTO(PuntoDeVenta puntoDeVenta) {

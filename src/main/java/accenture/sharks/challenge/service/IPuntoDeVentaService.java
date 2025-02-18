@@ -9,13 +9,11 @@ public interface IPuntoDeVentaService {
 
     List<PuntoDeVentaDTO> getAllPuntosDeVenta();
 
-    public PuntoDeVentaDTO getPuntoDeVenta(Long id);
+    PuntoDeVentaDTO getPuntoDeVenta(Long id);
 
     void addPuntoDeVenta(PuntoDeVentaDTO puntoDeVenta);
 
-    Long generateNewId();
-
-    boolean updatePuntoDeVenta(PuntoDeVentaDTO puntoVenta);
+    void updatePuntoDeVenta(PuntoDeVentaDTO puntoVenta);
 
     void removePuntoDeVenta(Long id);
 

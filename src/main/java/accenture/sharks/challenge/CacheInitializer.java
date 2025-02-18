@@ -3,6 +3,7 @@ package accenture.sharks.challenge;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.PuntoDeVentaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
@@ -24,25 +25,30 @@ public class CacheInitializer {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public CacheInitializer(RedisTemplate<String, Object> redisTemplate) {
+    private final PuntoDeVentaRepository puntoDeVentaRepository;
+
+    public CacheInitializer(RedisTemplate<String, Object> redisTemplate, PuntoDeVentaRepository puntoDeVentaRepository) {
         this.redisTemplate = redisTemplate;
+        this.puntoDeVentaRepository = puntoDeVentaRepository;
     }
 
     @Bean
     public ApplicationRunner initializeRedisCache() {
         return args -> {
             List<PuntoDeVenta> puntosDeVentaIniciales = Arrays.asList(
-                    new PuntoDeVenta(1L, "CABA"),
-                    new PuntoDeVenta(2L, "GBA_1"),
-                    new PuntoDeVenta(3L, "GBA_2"),
-                    new PuntoDeVenta(4L, "Santa Fe"),
-                    new PuntoDeVenta(5L, "Córdoba"),
-                    new PuntoDeVenta(6L, "Misiones"),
-                    new PuntoDeVenta(7L, "Salta"),
-                    new PuntoDeVenta(8L, "Chubut"),
-                    new PuntoDeVenta(9L, "Santa Cruz"),
-                    new PuntoDeVenta(10L, "Catamarca")
+                    new PuntoDeVenta("CABA", true),
+                    new PuntoDeVenta("GBA_1", true),
+                    new PuntoDeVenta("GBA_2", true),
+                    new PuntoDeVenta( "Santa Fe", true),
+                    new PuntoDeVenta("Córdoba", true),
+                    new PuntoDeVenta("Misiones", true),
+                    new PuntoDeVenta("Salta", true),
+                    new PuntoDeVenta("Chubut", true),
+                    new PuntoDeVenta("Santa Cruz", true),
+                    new PuntoDeVenta("Catamarca", true)
             );
+
+            puntoDeVentaRepository.saveAll(puntosDeVentaIniciales);
 
             HashOperations<String, String, PuntoDeVenta> hashOperations = redisTemplate.opsForHash();
 

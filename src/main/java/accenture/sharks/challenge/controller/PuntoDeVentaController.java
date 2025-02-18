@@ -58,12 +58,11 @@ public class PuntoDeVentaController {
         }
 
         logger.info("Agregando punto de venta: {}", puntoDeVentaDTO.getNombre());
-        Long newId = puntoVentaService.generateNewId();
-        puntoDeVentaDTO.setId(newId);
+        puntoDeVentaDTO.setActivo(true);
 
         puntoVentaService.addPuntoDeVenta(puntoDeVentaDTO);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body("Punto de venta creado con id: " + newId);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Punto de venta creado, nombre: " + puntoDeVentaDTO.getNombre());
     }
 
 
@@ -79,28 +78,25 @@ public class PuntoDeVentaController {
         logger.info("Actualizando punto de venta: {}", puntoDeVenta.getNombre());
         boolean puntoExistente;
         try {
-           puntoExistente = puntoVentaService.updatePuntoDeVenta(puntoDeVenta);
+           puntoVentaService.updatePuntoDeVenta(puntoDeVenta);
         } catch (IdMissingException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
 
-        if (!puntoExistente) {
-            return ResponseEntity.status(HttpStatus.CREATED).body("El punto de venta no existía, se ha creado");
-        }
 
-        return ResponseEntity.status(HttpStatus.OK).body("Punto de venta actualizado, nuevo nombre: " + puntoDeVenta.getNombre());
+        return ResponseEntity.status(HttpStatus.OK).body("Punto de venta actualizado, nombre: " + puntoDeVenta.getNombre());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePuntoVenta(@PathVariable Long id) {
-        logger.info("Eliminando punto de venta con id: {}", id);
+        logger.info("Dando de baja punto de venta con id: {}", id);
         try {
             puntoVentaService.removePuntoDeVenta(id);
 
         } catch (PuntoDeVentaNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
         }
-        return ResponseEntity.ok().body("Punto de venta eliminado con id: " + id);
+        return ResponseEntity.ok().body("Punto de venta dado de baja con id: " + id);
     }
 
 }
