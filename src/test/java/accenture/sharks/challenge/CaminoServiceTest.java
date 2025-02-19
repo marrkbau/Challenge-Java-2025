@@ -14,6 +14,7 @@ import accenture.sharks.challenge.exceptions.DeleteCaminoException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.CaminoRepository;
 import accenture.sharks.challenge.service.impl.CaminoService;
 import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,6 +45,9 @@ public class CaminoServiceTest {
   private HashOperations<String, Object, Object> hashPuntoDeVenta;
 
   @Mock
+  private CaminoRepository caminoRepository;
+
+  @Mock
   private ModelMapper modelMapper;
 
   private CaminoService caminoService;
@@ -51,7 +55,7 @@ public class CaminoServiceTest {
   @BeforeEach
   void setUp() {
     when(redisTemplate.opsForHash()).thenReturn(hashCamino);
-    caminoService = new CaminoService(redisTemplate, modelMapper);
+    caminoService = new CaminoService(redisTemplate, modelMapper, caminoRepository);
   }
 
   @Test
@@ -138,9 +142,9 @@ public class CaminoServiceTest {
         "1-3", camino3
     );
 
-    PuntoDeVenta punto1 = new PuntoDeVenta(1L, "Punto 1");
-    PuntoDeVenta punto2 = new PuntoDeVenta(2L, "Punto 2");
-    PuntoDeVenta punto3 = new PuntoDeVenta(3L, "Punto 3");
+    PuntoDeVenta punto1 = new PuntoDeVenta(1L, "Punto 1", true);
+    PuntoDeVenta punto2 = new PuntoDeVenta(2L, "Punto 2", true);
+    PuntoDeVenta punto3 = new PuntoDeVenta(3L, "Punto 3", true);
 
     when(hashCamino.entries(CacheEntries.CAMINOS.getValue())).thenReturn(caminos);
     when(hashPuntoDeVenta.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(punto1);

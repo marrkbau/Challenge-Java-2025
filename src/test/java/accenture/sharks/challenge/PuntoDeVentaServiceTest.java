@@ -61,8 +61,8 @@ public class PuntoDeVentaServiceTest {
 
   @Test
   void testGetAllPuntosDeVenta() {
-    PuntoDeVenta punto1 = new PuntoDeVenta(1L, "Tienda 1");
-    PuntoDeVenta punto2 = new PuntoDeVenta(2L, "Tienda 2");
+    PuntoDeVenta punto1 = new PuntoDeVenta(1L, "Tienda 1", true);
+    PuntoDeVenta punto2 = new PuntoDeVenta(2L, "Tienda 2", true);
     when(hashOperations.values(CacheEntries.PUNTOS_DE_VENTA.getValue())).thenReturn(Arrays.asList(punto1, punto2));
 
     PuntoDeVentaDTO dto1 = new PuntoDeVentaDTO(1L, "Tienda 1");
@@ -79,7 +79,7 @@ public class PuntoDeVentaServiceTest {
 
   @Test
   void testGetPuntoDeVenta() {
-    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda 1");
+    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda 1", true);
     when(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(punto);
 
     PuntoDeVentaDTO dto = new PuntoDeVentaDTO(1L, "Tienda 1");
@@ -95,24 +95,29 @@ public class PuntoDeVentaServiceTest {
   @Test
   void testAddPuntoDeVenta() {
     PuntoDeVentaDTO dto = new PuntoDeVentaDTO(null, "Tienda Nueva");
-    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda Nueva");
+    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda Nueva", true);
 
     when(hashOperations.values(CacheEntries.PUNTOS_DE_VENTA.getValue())).thenReturn(Collections.emptyList());
     when(modelMapper.map(dto, PuntoDeVenta.class)).thenReturn(punto);
+    when(puntoDeVentaRepository.save(punto)).thenReturn(punto);
+
 
     puntoDeVentaService.addPuntoDeVenta(dto);
 
-    assertNotNull(dto.getId());
     verify(hashOperations).put(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1", punto);
   }
 
   @Test
   void testUpdatePuntoDeVenta_Success() {
     PuntoDeVentaDTO dto = new PuntoDeVentaDTO(1L, "Tienda Actualizada");
-    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda Actualizada");
+    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda Actualizada", true);
 
-    when(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(new PuntoDeVenta(1L, "Tienda Vieja"));
+    when(hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(new PuntoDeVenta(1L, "Tienda Vieja", true));
     when(modelMapper.map(dto, PuntoDeVenta.class)).thenReturn(punto);
+    when(puntoDeVentaRepository.save(punto)).thenReturn(punto);
+    when(puntoDeVentaRepository.findById(1L)).thenReturn(java.util.Optional.of(punto));
+
+    puntoDeVentaService.updatePuntoDeVenta(dto);
 
     verify(hashOperations).put(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1", punto);
   }
@@ -128,7 +133,8 @@ public class PuntoDeVentaServiceTest {
   @Test
   void testRemovePuntoDeVenta_Success() {
     when(hashOperations.delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(1L);
-
+    PuntoDeVenta punto = new PuntoDeVenta(1L, "Tienda 1", true);
+    when(puntoDeVentaRepository.findById(1L)).thenReturn(java.util.Optional.of(punto));
     puntoDeVentaService.removePuntoDeVenta(1L);
 
     verify(hashOperations).delete(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1");

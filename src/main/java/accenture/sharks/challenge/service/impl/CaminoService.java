@@ -7,7 +7,9 @@ import accenture.sharks.challenge.exceptions.DeleteCaminoException;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.dto.CaminoMinimoDTO;
+import accenture.sharks.challenge.model.CaminoId;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.CaminoRepository;
 import accenture.sharks.challenge.service.ICaminoService;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.redis.core.HashOperations;
@@ -23,11 +25,14 @@ public class CaminoService implements ICaminoService {
     private final HashOperations<String, String, PuntoDeVenta> hashPuntoDeVenta;
     private final ModelMapper modelMapper;
 
+    private final CaminoRepository caminoRepository;
 
-    public CaminoService(RedisTemplate<String, Object> redisTemplate, ModelMapper modelMapper) {
+
+    public CaminoService(RedisTemplate<String, Object> redisTemplate, ModelMapper modelMapper, CaminoRepository caminoRepository) {
         this.hashCamino = redisTemplate.opsForHash();
         this.hashPuntoDeVenta = redisTemplate.opsForHash();
         this.modelMapper = modelMapper;
+        this.caminoRepository = caminoRepository;
     }
 
     /**
@@ -48,6 +53,7 @@ public class CaminoService implements ICaminoService {
         Camino camino = toEntity(caminoDTO);
         String key = generateKey(camino.getIdA(), camino.getIdB());
         hashCamino.put(CacheEntries.CAMINOS.getValue(), key, camino);
+        caminoRepository.save(camino);
     }
     /**
      * Elimina un camino directo entre dos puntos
@@ -55,8 +61,10 @@ public class CaminoService implements ICaminoService {
     @Override
     public void deleteCamino(Long idA, Long idB) {
         String key = generateKey(idA, idB);
+        CaminoId caminoId = new CaminoId(idA, idB);
         if(hashCamino.hasKey(CacheEntries.CAMINOS.getValue(), key)) {
             hashCamino.delete(CacheEntries.CAMINOS.getValue(), key);
+            caminoRepository.deleteById(caminoId);
         } else {
             throw new DeleteCaminoException("No se encontro el camino entre los puntos " + idA + " y " + idB);
         }
@@ -69,12 +77,22 @@ public class CaminoService implements ICaminoService {
     @Override
     public List<CaminoDTO> getCaminosDirectosDesdeUnPunto(Long id) {
         Map<String, Camino> allCaminos = hashCamino.entries(CacheEntries.CAMINOS.getValue());
+
         List<CaminoDTO> result = new ArrayList<>();
 
-        for (Camino camino : allCaminos.values()) {
-            if (camino.getIdA().equals(id) || camino.getIdB().equals(id)) {
+        if (allCaminos.isEmpty()) {
+            List<Camino> caminosDesdePunto = caminoRepository.findByIdAOrIdB(id, id);
+            for (Camino camino : caminosDesdePunto) {
                 CaminoDTO caminoDTO = toDTO(camino);
                 result.add(caminoDTO);
+            }
+        } else {
+
+            for (Camino camino : allCaminos.values()) {
+                if (camino.getId().getIdA().equals(id) || camino.getId().getIdB().equals(id)) {
+                    CaminoDTO caminoDTO = toDTO(camino);
+                    result.add(caminoDTO);
+                }
             }
         }
 
@@ -82,14 +100,24 @@ public class CaminoService implements ICaminoService {
     }
 
 
+
     @Override
     public CaminoMinimoDTO getCaminoMenorCosto(Long idA, Long idB) {
+
         Map<String, Camino> caminos = hashCamino.entries(CacheEntries.CAMINOS.getValue());
+        if (caminos.isEmpty()) {
+            List<Camino> caminosDesdeBaseDeDatos = caminoRepository.findAll();
+            caminos = new HashMap<>();
+            for (Camino camino : caminosDesdeBaseDeDatos) {
+                String key = generateKey(camino.getIdA(), camino.getIdB());
+                caminos.put(key, camino);
+            }
+        }
 
         Map<Long, Map<Long, Double>> grafo = construirGrafo(caminos);
-
         return buscarCaminoMasCorto(grafo, idA, idB);
     }
+
 
     private static class Nodo {
         Long id;
@@ -165,11 +193,11 @@ public class CaminoService implements ICaminoService {
     }
 
     private CaminoDTO toDTO(Camino camino) {
-        return modelMapper.map(camino, CaminoDTO.class);
+        return new CaminoDTO(camino.getIdA(), camino.getIdB(), camino.getCosto());
     }
 
     private Camino toEntity(CaminoDTO caminoDTO) {
-        return modelMapper.map(caminoDTO, Camino.class);
+        return new Camino(caminoDTO.getIdA(), caminoDTO.getIdB(), caminoDTO.getCosto());
     }
 
 

@@ -76,10 +76,9 @@ public class PuntoDeVentaController {
         }
 
         logger.info("Actualizando punto de venta: {}", puntoDeVenta.getNombre());
-        boolean puntoExistente;
         try {
            puntoVentaService.updatePuntoDeVenta(puntoDeVenta);
-        } catch (IdMissingException e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
 

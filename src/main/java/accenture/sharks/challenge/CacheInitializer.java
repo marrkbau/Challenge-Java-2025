@@ -3,6 +3,7 @@ package accenture.sharks.challenge;
 import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
+import accenture.sharks.challenge.repository.CaminoRepository;
 import accenture.sharks.challenge.repository.PuntoDeVentaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +28,12 @@ public class CacheInitializer {
 
     private final PuntoDeVentaRepository puntoDeVentaRepository;
 
-    public CacheInitializer(RedisTemplate<String, Object> redisTemplate, PuntoDeVentaRepository puntoDeVentaRepository) {
+    private final CaminoRepository caminoRepository;
+
+    public CacheInitializer(RedisTemplate<String, Object> redisTemplate, PuntoDeVentaRepository puntoDeVentaRepository, CaminoRepository caminoRepository) {
         this.redisTemplate = redisTemplate;
         this.puntoDeVentaRepository = puntoDeVentaRepository;
+        this.caminoRepository = caminoRepository;
     }
 
     @Bean
@@ -78,6 +82,8 @@ public class CacheInitializer {
                     new Camino(10L, 5L, 5d),
                     new Camino(4L, 6L, 6d)
             );
+
+            caminoRepository.saveAll(caminosIniciales);
 
             HashOperations<String, String, Camino> caminoHashOperations = redisTemplate.opsForHash();
             long caminoCount = caminoHashOperations.size(CacheEntries.CAMINOS.getValue());

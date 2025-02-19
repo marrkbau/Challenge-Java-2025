@@ -52,7 +52,7 @@ public class CaminoController {
             return new ResponseEntity<>("Camino eliminado exitosamente", HttpStatus.OK);
         } catch (DeleteCaminoException e) {
             logger.error("Error al eliminar el camino: {}", e.getMessage());
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
 

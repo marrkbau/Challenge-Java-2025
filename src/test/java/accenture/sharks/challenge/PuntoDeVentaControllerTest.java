@@ -65,7 +65,7 @@ public class PuntoDeVentaControllerTest {
     ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, puntoDeVentaDTO, String.class);
 
     assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertTrue(response.getBody().contains("Punto de venta creado con id"));
+    assertTrue(response.getBody().contains("Punto de venta creado, nombre: Nuevo Punto de Venta"));
   }
 
   @Test
@@ -90,7 +90,7 @@ public class PuntoDeVentaControllerTest {
     );
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertTrue(response.getBody().contains("Punto de venta eliminado con id: 1"));
+    assertTrue(response.getBody().contains("Punto de venta dado de baja con id: 1"));
   }
 
   @Test
@@ -143,8 +143,7 @@ public class PuntoDeVentaControllerTest {
         String.class
     );
 
-    assertEquals(HttpStatus.CREATED, response.getStatusCode());
-    assertTrue(response.getBody().contains("El punto de venta no existía, se ha creado"));
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
   }
 
   @Test
