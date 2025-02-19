@@ -90,12 +90,23 @@ public class CaminoControllerTest {
   }
 
   @Test
-  public void testGetCaminoMenorCostoNoEncontrado() {
+  public void testGetCaminoMenorCostoNoExisten() {
     Long idA = 100L;
     Long idB = 200L;
 
-    ResponseEntity<CaminoMinimoDTO> response = restTemplate.getForEntity(baseUrl + "/" + idA + "/" + idB, CaminoMinimoDTO.class);
+    ResponseEntity<?> response = restTemplate.getForEntity(baseUrl + "/" + idA + "/" + idB, CaminoMinimoDTO.class);
+
+    assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+  }
+
+  @Test
+  public void testGetCaminoMenorCostoNoEncontrado() {
+    Long idA = 1L;
+    Long idB = 11L;
+
+    ResponseEntity<?> response = restTemplate.getForEntity(baseUrl + "/" + idA + "/" + idB, CaminoMinimoDTO.class);
 
     assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
   }
+
 }

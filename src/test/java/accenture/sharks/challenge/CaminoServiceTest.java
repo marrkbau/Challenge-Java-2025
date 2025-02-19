@@ -15,6 +15,7 @@ import accenture.sharks.challenge.model.CacheEntries;
 import accenture.sharks.challenge.model.Camino;
 import accenture.sharks.challenge.model.PuntoDeVenta;
 import accenture.sharks.challenge.repository.CaminoRepository;
+import accenture.sharks.challenge.repository.PuntoDeVentaRepository;
 import accenture.sharks.challenge.service.impl.CaminoService;
 import org.hibernate.sql.Delete;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,9 @@ public class CaminoServiceTest {
   private CaminoRepository caminoRepository;
 
   @Mock
+  private PuntoDeVentaRepository puntoDeVentaRepository;
+
+  @Mock
   private ModelMapper modelMapper;
 
   private CaminoService caminoService;
@@ -55,7 +59,7 @@ public class CaminoServiceTest {
   @BeforeEach
   void setUp() {
     when(redisTemplate.opsForHash()).thenReturn(hashCamino);
-    caminoService = new CaminoService(redisTemplate, modelMapper, caminoRepository);
+    caminoService = new CaminoService(redisTemplate, modelMapper, caminoRepository, puntoDeVentaRepository);
   }
 
   @Test
@@ -150,6 +154,12 @@ public class CaminoServiceTest {
     when(hashPuntoDeVenta.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(punto1);
     when(hashPuntoDeVenta.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "2")).thenReturn(punto2);
     when(hashPuntoDeVenta.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), "3")).thenReturn(punto3);
+    when(hashPuntoDeVenta.hasKey(CacheEntries.PUNTOS_DE_VENTA.getValue(), "1")).thenReturn(true);
+    when(hashPuntoDeVenta.hasKey(CacheEntries.PUNTOS_DE_VENTA.getValue(), "2")).thenReturn(true);
+    when(hashPuntoDeVenta.hasKey(CacheEntries.PUNTOS_DE_VENTA.getValue(), "3")).thenReturn(true);
+    when(puntoDeVentaRepository.findById(1L)).thenReturn(java.util.Optional.of(punto1));
+    when(puntoDeVentaRepository.findById(2L)).thenReturn(java.util.Optional.of(punto2));
+    when(puntoDeVentaRepository.findById(3L)).thenReturn(java.util.Optional.of(punto3));
 
     CaminoMinimoDTO result = caminoService.getCaminoMenorCosto(1L, 3L);
 

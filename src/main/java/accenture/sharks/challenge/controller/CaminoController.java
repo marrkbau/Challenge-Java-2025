@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/caminos")
@@ -63,14 +65,26 @@ public class CaminoController {
     }
 
     @GetMapping("/{idA}/{idB}")
-    public ResponseEntity<CaminoMinimoDTO> getCaminoMenorCosto(@PathVariable Long idA, @PathVariable Long idB) {
+    public ResponseEntity<?> getCaminoMenorCosto(@PathVariable Long idA, @PathVariable Long idB) {
         logger.info("Obteniendo camino de menor costo entre los puntos {} y {}", idA, idB);
-        CaminoMinimoDTO camino = caminoService.getCaminoMenorCosto(idA, idB);
-        if (camino == null) {
-            return ResponseEntity.notFound().build();
+        CaminoMinimoDTO camino;
+        try {
+            camino = caminoService.getCaminoMenorCosto(idA, idB);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error al obtener el camino de menor costo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
+
+        if (camino == null) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "No se encontró un camino entre los puntos " + idA + " y " + idB);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(camino);
     }
+
 
 
 

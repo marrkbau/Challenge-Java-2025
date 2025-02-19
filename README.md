@@ -48,10 +48,12 @@ Ejemplo:
 }
 ```
 * PUT /puntos Actualiza un punto de venta en la cache. En el caso de que no exista ese punto lo crea.
+El campo activo es opcional, es otra forma de darlo de baja o bien, darlo de alta
 ```json
 {
     "id": 1,
-    "nombre": "tierra del fuego"
+    "nombre": "tierra del fuego",
+    "activo": true 
 }
 ```
 * DELETE /puntos/{id} Elimina un punto de venta de la cache. 
@@ -83,10 +85,13 @@ Ejemplo:
 * Usé DTOs y ModelMapper para mapear de DTO a entidad y viceversa ya que a pesar de que hay entidades que no están 
 siendo persistidas me pareció una buena practica para mantener las validaciones de Jakarta Validation desacopladas de 
 la entidad que quizá en algún momento se quiera persistir o modificar. 
+* Con el PUT de /puntos, el punto de venta se puede volver a activar si se encontraba inactivo.
 
 ## Suposiciones
 * Asumo que al cargar un camino directo entre un punto A y un punto B, 
 y ya se encontraba ese camino, funcionaria como una actualización de costo. 
+* Asumo que cuando un camino está inactivo (dado de baja) no cuenta para generar el camino de menor costo.
+* Cuando se genera el POST de un punto de venta, se le asigna un id incremental, por lo que no se puede asignar un id de manera manual.
 
 ## Test y Coverage
 Para correr los tests es necesario que la base de datos y la cache en redis estén corriendo. Quería hacerlo con H2 pero 

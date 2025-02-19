@@ -49,11 +49,12 @@ public class CacheInitializer {
                     new PuntoDeVenta("Salta", true),
                     new PuntoDeVenta("Chubut", true),
                     new PuntoDeVenta("Santa Cruz", true),
-                    new PuntoDeVenta("Catamarca", true)
+                    new PuntoDeVenta("Catamarca", true),
+                    new PuntoDeVenta("Tierra del Fuego", true),
+                    new PuntoDeVenta("Ushuaia", true)
             );
 
             puntoDeVentaRepository.saveAll(puntosDeVentaIniciales);
-
             HashOperations<String, String, PuntoDeVenta> hashOperations = redisTemplate.opsForHash();
 
             long initialCount = hashOperations.size(CacheEntries.PUNTOS_DE_VENTA.getValue());
@@ -80,7 +81,8 @@ public class CacheInitializer {
                     new Camino(3L, 8L, 10d),
                     new Camino(5L, 8L, 30d),
                     new Camino(10L, 5L, 5d),
-                    new Camino(4L, 6L, 6d)
+                    new Camino(4L, 6L, 6d),
+                    new Camino(11L, 12L, 7d)
             );
 
             caminoRepository.saveAll(caminosIniciales);

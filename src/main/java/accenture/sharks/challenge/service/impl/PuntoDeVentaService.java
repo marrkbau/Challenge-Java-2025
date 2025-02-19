@@ -64,17 +64,20 @@ public class PuntoDeVentaService implements IPuntoDeVentaService {
 
     /**
      * Retorna un punto de venta por su ID
+     * Si el punto de venta fue dado de baja, no se cachea en Redis
      */
     @Override
     public PuntoDeVentaDTO getPuntoDeVenta(Long id) {
         PuntoDeVenta puntoDeVenta = hashOperations.get(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString());
         try{
             return toDTO(puntoDeVenta);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             puntoDeVenta = puntoDeVentaRepository.findById(id)
                 .orElseThrow(() -> new PuntoDeVentaNotFoundException("No existe punto de venta con id: " + id));
 
-            hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString(), puntoDeVenta);
+            if(!puntoDeVenta.isActivo()) {
+                hashOperations.put(CacheEntries.PUNTOS_DE_VENTA.getValue(), id.toString(), puntoDeVenta);
+            }
             return toDTO(puntoDeVenta);
         }
     }

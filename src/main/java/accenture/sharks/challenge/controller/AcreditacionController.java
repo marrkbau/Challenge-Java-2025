@@ -42,7 +42,11 @@ public class AcreditacionController {
             return ResponseEntity.badRequest().body(errorMessages.toString());
         }
         logger.info("Generando acreditación para el punto de venta: {}", acreditacion.getIdPuntoDeVenta());
-        acreditacionService.generarAcreditacion(acreditacion);
+        try {
+            acreditacionService.generarAcreditacion(acreditacion);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró el punto de venta con id: " + acreditacion.getIdPuntoDeVenta());
+        }
         return ResponseEntity.ok("Acreditación generada exitosamente");
     }
 
@@ -52,9 +56,7 @@ public class AcreditacionController {
         List<AcreditacionDTO> acreditacionesDTO = acreditacionService.getAcreditacionesByIdPuntoDeVenta(idPuntoDeVenta);
 
         if(acreditacionesDTO.isEmpty()) {
-            Map<String, String> response = new HashMap<>();
-            response.put("mensaje", "No se encontraron acreditaciones para el punto de venta con id: " + idPuntoDeVenta);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron acreditaciones para el punto de venta con id: " + idPuntoDeVenta);
         } else {
             return ResponseEntity.ok(acreditacionesDTO);
         }

@@ -54,7 +54,7 @@ public class PuntoDeVentaControllerTest {
         new ParameterizedTypeReference<List<PuntoDeVentaDTO>>() {}
     );
 
-    assertEquals(10, response.getBody().size());
+    assertEquals(12, response.getBody().size());
   }
 
   @Test
