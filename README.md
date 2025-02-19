@@ -94,8 +94,7 @@ y ya se encontraba ese camino, funcionaria como una actualización de costo.
 * Cuando se genera el POST de un punto de venta, se le asigna un id incremental, por lo que no se puede asignar un id de manera manual.
 
 ## Test y Coverage
-Para correr los tests es necesario que la base de datos y la cache en redis estén corriendo. Quería hacerlo con H2 pero 
-no me dio el tiempo. 
+Para correr los tests es necesario que la cache en redis estén corriendo. La base de datos está embebida.
 Asimismo para ver el coverage de los tests, dejo una imagen con los resultados que IntelliJ me arrojó.
 
 ![img.png](img.png)

@@ -1,14 +1,17 @@
 package accenture.sharks.challenge.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
+@Schema(description = "Clave compuesta para la entidad Camino")
 public class CaminoId implements Serializable {
-
+  @Schema(description = "ID del punto de venta A", example = "1")
   private Long idA;
+  @Schema(description = "ID del punto de venta B", example = "2")
   private Long idB;
 
   public CaminoId() {

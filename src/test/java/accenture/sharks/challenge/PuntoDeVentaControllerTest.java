@@ -75,7 +75,7 @@ public class PuntoDeVentaControllerTest {
     ResponseEntity<String> response = restTemplate.postForEntity(baseUrl, puntoDeVentaDTO, String.class);
 
     assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    assertTrue(response.getBody().contains("El campo nombre no puede estar vacio"));
+    assertTrue(response.getBody().contains("Error: El campo nombre no puede estar vacío,"));
   }
 
   @Test

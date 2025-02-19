@@ -1,10 +1,17 @@
 package accenture.sharks.challenge.dto;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.util.List;
 
+@Schema(description = "DTO para representar el camino mínimo entre puntos de venta")
 public class CaminoMinimoDTO {
+
+    @Schema(description = "Lista de puntos de venta en el camino mínimo")
     private List<PuntoDeVentaDTO> puntosDeVentas;
+
+    @Schema(description = "Costo total del camino mínimo", example = "45.8")
     private Double costoTotal;
 
     public CaminoMinimoDTO() {

@@ -55,6 +55,17 @@ public class CaminoService implements ICaminoService {
             throw new AddCaminoException("El costo de un camino no puede ser negativo");
         }
 
+        boolean existeA = puntoDeVentaRepository.existsById(caminoDTO.getIdA());
+        boolean existeB = puntoDeVentaRepository.existsById(caminoDTO.getIdB());
+
+        if (!existeA && !existeB) {
+            throw new AddCaminoException("No se encontraron los puntos de venta: " + caminoDTO.getIdA() + " y " + caminoDTO.getIdB());
+        } else if (!existeA) {
+            throw new AddCaminoException("No se encontró el punto de venta con ID: " + caminoDTO.getIdA());
+        } else if (!existeB) {
+            throw new AddCaminoException("No se encontró el punto de venta con ID: " + caminoDTO.getIdB());
+        }
+
         Camino camino = toEntity(caminoDTO);
         String key = generateKey(camino.getIdA(), camino.getIdB());
         hashCamino.put(CacheEntries.CAMINOS.getValue(), key, camino);

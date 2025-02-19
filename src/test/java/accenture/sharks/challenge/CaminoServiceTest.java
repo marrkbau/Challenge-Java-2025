@@ -69,6 +69,8 @@ public class CaminoServiceTest {
     String key = "1-2";
 
     when(modelMapper.map(caminoDTO, Camino.class)).thenReturn(camino);
+    when(puntoDeVentaRepository.existsById(1L)).thenReturn(true);
+    when(puntoDeVentaRepository.existsById(2L)).thenReturn(true);
 
     caminoService.addCamino(caminoDTO);
 

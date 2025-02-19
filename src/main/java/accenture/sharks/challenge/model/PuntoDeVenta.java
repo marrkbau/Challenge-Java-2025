@@ -1,6 +1,7 @@
 package accenture.sharks.challenge.model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,16 +13,20 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "punto_de_venta")
+@Schema(description = "Entidad que representa un punto de venta")
 public class PuntoDeVenta implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Schema(description = "ID único del punto de venta", example = "1")
     private Long id;
 
     @Column(name = "activo")
+    @Schema(description = "Indica si el punto de venta está activo", example = "true")
     private boolean activo;
 
     @Column(name = "nombre")
+    @Schema(description = "Nombre del punto de venta", example = "Sucursal Norte")
     private String nombre;
 
 

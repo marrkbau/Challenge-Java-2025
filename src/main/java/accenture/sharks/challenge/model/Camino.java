@@ -1,6 +1,7 @@
 package accenture.sharks.challenge.model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
@@ -10,12 +11,15 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "camino")
+@Schema(description = "Entidad que representa un camino entre dos puntos de venta")
 public class Camino {
 
     @EmbeddedId
+    @Schema(description = "ID compuesto del camino")
     private CaminoId id;
 
     @Column(name = "costo")
+    @Schema(description = "Costo del camino", example = "12.5")
     private Double costo;
 
     public Camino() {

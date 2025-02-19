@@ -2,9 +2,12 @@ package accenture.sharks.challenge.controller;
 
 
 import accenture.sharks.challenge.dto.PuntoDeVentaDTO;
-import accenture.sharks.challenge.exceptions.IdMissingException;
 import accenture.sharks.challenge.exceptions.PuntoDeVentaNotFoundException;
 import accenture.sharks.challenge.service.IPuntoDeVentaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +22,8 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/puntos")
+@RestControllerAdvice(name = "Puntos de venta")
+@Tag(name = "Puntos de venta", description = "Operaciones relacionadas con los puntos de venta")
 public class PuntoDeVentaController {
 
     private final IPuntoDeVentaService puntoVentaService;
@@ -29,12 +34,21 @@ public class PuntoDeVentaController {
         this.puntoVentaService = puntoVentaService;
     }
 
+    @Operation(summary = "Obtiene todos los puntos de venta")
+    @ApiResponses(value = {
+        @ApiResponse( responseCode = "200", description = "Puntos de venta obtenidos exitosamente")
+    })
     @GetMapping
     public List<PuntoDeVentaDTO> getAllPuntosVenta() {
         logger.info("Obteniendo todos los puntos de venta");
         return puntoVentaService.getAllPuntosDeVenta();
     }
 
+    @Operation(summary = "Obtiene un punto de venta por id")
+    @ApiResponses(value = {
+        @ApiResponse( responseCode = "200", description = "Punto de venta obtenido exitosamente"),
+        @ApiResponse( responseCode = "404", description = "No se encontró el punto de venta")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<?> getPuntoVenta(@PathVariable Long id) {
         logger.info("Obteniendo punto de venta con id: {}", id);
@@ -48,6 +62,11 @@ public class PuntoDeVentaController {
         }
     }
 
+    @Operation(summary = "Agrega un punto de venta")
+    @ApiResponses(value = {
+        @ApiResponse( responseCode = "201", description = "Punto de venta creado exitosamente"),
+        @ApiResponse( responseCode = "400", description = "Error al agregar el punto de venta"),
+    })
     @PostMapping
     public ResponseEntity<String> addPuntoVenta(@RequestBody @Valid PuntoDeVentaDTO puntoDeVentaDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
@@ -66,6 +85,11 @@ public class PuntoDeVentaController {
     }
 
 
+    @Operation(summary = "Actualiza un punto de venta")
+    @ApiResponses(value = {
+        @ApiResponse( responseCode = "200", description = "Punto de venta actualizado exitosamente"),
+        @ApiResponse( responseCode = "400", description = "Error al actualizar el punto de venta"),
+    })
     @PutMapping
     public ResponseEntity<String> updatePuntoVenta(@RequestBody @Valid PuntoDeVentaDTO puntoDeVenta, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
@@ -86,6 +110,11 @@ public class PuntoDeVentaController {
         return ResponseEntity.status(HttpStatus.OK).body("Punto de venta actualizado, nombre: " + puntoDeVenta.getNombre());
     }
 
+    @Operation(summary = "Da de baja un punto de venta")
+    @ApiResponses(value = {
+        @ApiResponse( responseCode = "200", description = "Punto de venta dado de baja exitosamente"),
+        @ApiResponse( responseCode = "404", description = "No se encontró el punto de venta"),
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePuntoVenta(@PathVariable Long id) {
         logger.info("Dando de baja punto de venta con id: {}", id);
